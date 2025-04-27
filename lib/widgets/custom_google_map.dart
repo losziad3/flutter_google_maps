@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_google_maps/models/place_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CustomGoogleMap extends StatefulWidget {
@@ -12,11 +13,13 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition initialCameraPosition;
   late GoogleMapController googleMapController;
   Set<Marker> markers={};
-  String? mapStyle; // <-- Add a field to hold the style
+  String? mapStyle;
+
 
   @override
   void initState() {
     super.initState();
+    initMarkers();
     initialCameraPosition = const CameraPosition(
       zoom: 10,
       target: LatLng(30.007776806261962, 31.42619035342079),
@@ -29,6 +32,12 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     setState(() {});
   }
 
+  void initMarkers(){
+   var myMarker = places.map((placeModel)=>Marker(
+        position: placeModel.latLng,
+        markerId: MarkerId(placeModel.id.toString()))).toSet();
+   markers.addAll(myMarker);
+  }
   @override
   void dispose() {
     googleMapController.dispose();
@@ -55,7 +64,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             onPressed: () {
               CameraPosition newLocation = const CameraPosition(
                 target: LatLng(29.95935442539678, 30.923946973445624),
-                zoom: 12,
+                zoom: 15,
               );
               googleMapController.animateCamera(
                 CameraUpdate.newCameraPosition(newLocation),
